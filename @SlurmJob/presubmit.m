@@ -2,6 +2,8 @@ function presubmit(jobject)
     
     data = jobject.data; %Rename for simplification of saved datatype.
     handle = jobject.handle;
+    constants = jobject.constants;
+    
     jobject.nJobs = numel(data);
     
     % If no matlab string. generate.
@@ -15,10 +17,11 @@ function presubmit(jobject)
     end
     
     % Save to workspace.
-    save([jobject.workDir, '/handledata.mat'], 'handle', 'data');
+    save([jobject.workDir, '/handledata.mat'], 'handle', 'data', 'constants');
 
-    if jobject.passWorkspace==1
-        save([jobject.workDir,'/workspace.mat'])
+    if jobject.passWorkspace==1   
+        bsecmd = ['save(''' jobject.workDir '/workspace.mat'');'];
+        evalin('base', bsecmd);
     end
     
     % For debug readablility mlmString does not include escaped characters.

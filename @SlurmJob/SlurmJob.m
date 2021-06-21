@@ -1,31 +1,39 @@
 classdef SlurmJob < handle
     % SlurmManager Class for managing Slurm jobs within MATLAB.
-    %   Detailed explanation goes here
+    % Slurm 
+    % Create new instance by calling 'SlurmJob'.
+    % Assign slurm arguments using 'addarg' method (could also assign direclty if lazy).
+    % 
     properties
-        slurmArg = struct;
-        silent = false;
-        passWorkspace = false;        
-        workDir;
-        keepWorkDir = false;
-        handle = @disp;
-        data = {'No data'};
-        mlStr;
-        slStr;
-        waitPeriod = 5; %Time 
-        arrayMax = 40; % Limit to this many jobs at once.
-        %progBarSize = 40;
-        %throbber = ["/ ", "- ", "\\ ", "| "];
+        handle = @disp;         % Function to be called.
+        data;                   % Data to do paralell operation on. Must be iterable.
+        constants = {};         % Constants needed by the function. 
+
+        slurmArg = struct;      % Aruments to be passed to slurm.
+        silent = false;         % Does nothing. 
+        passWorkspace = false;  % Passes entire workspace to function. Don't do this.       
+        workDir;                % Temporary Working directory. Set automatically if unassigned.
+        keepWorkDir = false;    % Delete WorkDir on sucessful completion.
+        mlStr;                  % Matlab command to be run. Can be set manually.
+        slStr;                  % slurm command to be run. Can be set manually.
+        waitPeriod = 15;        % How often to ping squeue when waiting. 
+        arrayMax = 40;          % Limit to this many jobs at once. Same as slurm array '%'
+        
+        
+        % In the form {'const1' 'const2'}
+        % progBarSize = 40;
+        % throbber = ["/ ", "- ", "\\ ", "| "];
     end
     properties (SetAccess = protected, GetAccess=public)
-        nJobs;
-        jobid;
-        handleArgOut;
-        results;
-        status='UNKNOWN';
+        nJobs;                  % Number jobs to run. Equal to length of 'data'
+        jobid;                  % Slurm job id.
+        handleArgOut;           % How many arguments the output has, maybe?
+        results;                % The results. Cell array.
+        status='UNKNOWN';       % Current slurm job status.
     end
 
     methods
-        add(jobject,key,value);
+        addarg(jobject,key,value);
         testsubmit(jobject);
         submit(jobject);
         % Constructor

@@ -1,4 +1,9 @@
-function result=wait(jobject)
+function results=wait(jobject)
+% Blocking method, will wait until all jobs are complete then return results.
+% Still undecided on whether this method should return a value or not.
+% as value is accesable in the 'jobject.results' property anyway.
+
+
 %     [submitstatus, returnstring]=system(strjoin(['sacct -nj ', jjobjectect.jobid, ' --array | wc -l'],''));
 %     if submitstatus ~= 0
 %         error(returnstring);
@@ -13,14 +18,20 @@ function result=wait(jobject)
         returnArray = split(strtrim(returnstring));
         
         for i=1:length(returnArray)
-            state=returnArray{i};
-            if length(state)<2
-                break
-            end
-            if isfield(nStates,state)
-                nStates.(state)=nStates.(state)+1;
-            else
-                nStates.(state)=1;
+            try
+                % Parsing of squeue could be improved.
+
+                state=returnArray{i};
+                if length(state)<2
+                    break
+                end
+                if isfield(nStates,state)
+                    nStates.(state)=nStates.(state)+1;
+                else
+                    nStates.(state)=1;
+                end
+            catch
+                warning(returnArray{i});
             end
         end
         
@@ -54,7 +65,7 @@ function result=wait(jobject)
     
     if jobject.handleArgOut > 0
         jobject.collect;
-        result = jobject.result;
+        results = jobject.results;
     end
     
     if ~jobject.keepWorkDir

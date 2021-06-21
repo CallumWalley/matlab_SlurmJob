@@ -40,8 +40,8 @@ classdef SlurmJob < handle
         function obj=SlurmJob()   
             % take slurm id to follow existing job.
             obj.workDir=tempname(pwd);
-            obj.add('output', [obj.workDir,'/slurm%x.out']);
-            obj.add('open-mode', 'append');
+            obj.addarg('output', [obj.workDir,'/slurm%x.out']);
+            obj.addarg('open-mode', 'append');
             mkdir(obj.workDir)
         end
     end
